@@ -24,7 +24,7 @@ const Header = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link  className="nav-link" to="/session/new">
+              <Link className="nav-link" to="/session/new">
                 Вход
               </Link>
             </li>

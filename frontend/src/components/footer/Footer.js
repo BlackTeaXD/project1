@@ -1,13 +1,14 @@
-import React from "react";
+import React from 'react';
 import './styles.css';
 
 const Footer = () => {
   return (
-    <footer className="bg-dark text-light">
-      <div className="container py-3">
+    <footer>
+      <div className="container padding-y">
         <p className="lead mb-0">© Hexlet Ltd, 2021</p>
       </div>
     </footer>
-  )
-}
+  );
+};
+
 export default Footer;

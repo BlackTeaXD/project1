@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './styles.css'
 
 
 const Sign = () => {
@@ -11,7 +12,7 @@ const Sign = () => {
     console.log(name,lastName,email,password);
   };
   return (
-    <div className="col-12 col-md-6 mt-3 mt-mb-0">
+    <div className="col col-md-6 mt-3">
     <form onSubmit={submit}>
       <div className="form-floating mb-3">
         <input
@@ -23,7 +24,6 @@ const Sign = () => {
           type="text"
           onChange={(e) => setName(e.target.value)}
         />
-        <label htmlFor="data_firstName">Имя</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -35,7 +35,6 @@ const Sign = () => {
           type="text"
           onChange={(e) => setLastName(e.target.value)}
         />
-        <label htmlFor="data_lastName">Фамилия</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -47,7 +46,6 @@ const Sign = () => {
           type="text"
           onChange={(e) => setEmail(e.target.value)}
         />
-        <label htmlFor="data_email">Email</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -59,9 +57,8 @@ const Sign = () => {
           type="password"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <label htmlFor="data_password">Пароль</label>
       </div>
-      <input className="btn btn-primary" type="submit" value="Сохранить" />
+      <input className="btn mt-0" type="submit" value="Сохранить" />
     </form>
   </div>
   )

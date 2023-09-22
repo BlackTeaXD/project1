@@ -1,0 +1,246 @@
+openapi: 3.0.0
+info:
+  title: To-do list API
+  version: 1.0.0
+tags:
+  - name: authentication
+    description: Operations about registration and login
+  - name: user
+    description: Operations about user
+  - name: label
+    description: Operations about label
+  - name: status
+    description: Operations about status
+  - name: task
+    description: Operations about task
+
+paths:
+  /sign-up:
+    post:
+      tags:
+        - authentication
+      description: Register a new user
+      requestBody:
+        description: Email should be unique
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: Adams
+                lastname:
+                  type: string
+                  example: Baker
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  example: FrsxYEsoQmkDQEw
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 42
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                      email:
+                        type: string
+                        format: email
+                  accessKey:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkYW1zIEJha2VyIiwiaWF0IjoxNTE2MjM5MDIyfQ.eTsYu9XDqEXsA5sw_uFEk0lvQZuzmkqSGYXN4YRj8_k
+        '409':
+          description: User already exists
+        '500':
+          description: Server error
+
+  /sign-in:
+    post:
+      tags:
+        - authentication
+      description: Sign in as registered user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  example: FrsxYEsoQmkDQEw
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 42
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                      email:
+                        type: string
+                        format: email
+                  accessKey:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkYW1zIEJha2VyIiwiaWF0IjoxNTE2MjM5MDIyfQ.eTsYu9XDqEXsA5sw_uFEk0lvQZuzmkqSGYXN4YRj8_k
+        '401':
+          description: Incorrect email or password
+
+  /users:
+    get:
+      tags:
+        - user
+      summary: Get all registered users
+      description: Does not require user's authentication
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int32
+                    firstname:
+                      type: string
+                      example: Adam
+                    lastname:
+                      type: string
+                      example: Baker
+                    email:
+                      type: string
+                      format: email
+                    createdAt:
+                      type: string
+                      format: date-time
+
+  /user/{userId}:
+    patch:
+      tags:
+        - user
+      summary: Update selected user
+      description: Requires user's authentication
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: Unique identifier from list
+          example: 45
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated email should be unique
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: Adam
+                lastname:
+                  type: string
+                  example: Baker
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  example: FrsxYEsoQmkDQEw
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  firstname:
+                    type: string
+                    example: Adam
+                  lastname:
+                    type: string
+                    example: Baker
+                  email:
+                    type: string
+                    format: email
+                  createdAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorised user access
+        '409':
+          description: User already exists
+    delete:
+      tags:
+        - user
+      summary: Delete selected user
+      description: Requires user's authentication. User can't delete himself
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: Unique identifier from list
+          example: 45
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorised user access
+        '403':
+          description: Unable to delete this user
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

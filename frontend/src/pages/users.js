@@ -1,24 +1,29 @@
 import React from 'react';
+import UserCard from '../components/users/userCard';
 
-const Login = () => {
+const Users = (props) => {
+  const { users } = props;
+  const renderUsersList = users.map((user) => {
+    return <UserCard user={user} key={user.id} />;
+  });
   return (
-  <div className="container wrapper flex-grow-1">
-    <h1 className="display-4 fw-bold mt-4">Пользователи</h1>
-    <div className="table-responsive">
-      <table className="table table-borderless table-striped mt-5 bg-white">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Полное имя</th>
-            <th>Email</th>
-            <th>Дата создания</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div className="container wrapper flex-grow-1">
+      <h1 className="display-4 fw-bold mt-4">Пользователи</h1>
+      <div className="table-responsive">
+        <table className="table table-borderless table-striped mt-5 bg-white">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Полное имя</th>
+              <th>Email</th>
+              <th>Дата создания</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>{renderUsersList}</tbody>
+        </table>
+      </div>
     </div>
-  </div>   
   );
 };
- export default Login
+export default Users;

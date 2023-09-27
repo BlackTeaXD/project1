@@ -1,12 +1,13 @@
-import React,{useState} from "react";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
-  const [email,setEmail] = useState('');
-  const [password,setPassword] = useState('');
-  const submit = (e) => {
-    e.preventDefault();
-    console.log(email,password)
-  }
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // const submit = (e) => {
+  //   e.preventDefault();
+  //   console.log(email, password);
+  // };
   return (
     <div className="col-12 col-md-6 mt-3 mt-mb-0">
       <form>
@@ -32,10 +33,12 @@ const Login = () => {
           />
           <label htmlFor="data_password">Пароль</label>
         </div>
-        <input className="btn btn-primary" type="button" value="Войти" onClick={submit}/>
+        <Link to='/tasks'>
+          <input className="btn btn-primary" type="button" value="Войти" />
+        </Link>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default Login;

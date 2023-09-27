@@ -33,6 +33,21 @@ const Header = () => {
                 Регистрация
               </Link>
             </li>
+            <li className="nav-item">
+              <Link  className="nav-link" to="/statuses">
+                Статусы
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link  className="nav-link" to="/labels">
+                Метки
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link  className="nav-link" to="tasks">
+                Задачи
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

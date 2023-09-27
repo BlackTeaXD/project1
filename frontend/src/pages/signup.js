@@ -1,6 +1,6 @@
 import React from 'react';
 import avatar from '../images/avatar.jpg';
-import Sign from '../components/sign/sign'
+import Sign from '../components/sign/Sign'
 const Signup = () => {
   return (
     <div className="container wrapper flex-grow-1">

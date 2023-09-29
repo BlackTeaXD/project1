@@ -1,17 +1,12 @@
-import React,{useState} from "react";
-import './styles.css'
+import React, { useState } from 'react';
 
 const Login = () => {
-  const [email,setEmail] = useState('');
-  const [password,setPassword] = useState('');
-  const submit = (e) => {
-    e.preventDefault();
-    console.log(email,password)
-  }
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   return (
-    <div className="col col-md-6 mt-3">
+    <div className="col-12 col-md-6 mt-3 mt-mb-0">
       <form>
-        <div className="form-floating mb-3">
+        <div className="form-floating mb-3 field">
           <input
             className="form-control"
             id="data_email"
@@ -20,6 +15,7 @@ const Login = () => {
             type="text"
             onChange={(e) => setEmail(e.target.value)}
           />
+          <label htmlFor="data_email">Email</label>
         </div>
         <div className="form-floating mb-3">
           <input
@@ -30,12 +26,12 @@ const Login = () => {
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
+          <label htmlFor="data_password">Пароль</label>
         </div>
-        <input className="btn" type="button" value="Войти" onClick={submit}/>
+        <input className="btn btn-primary" type="button" value="Войти" />
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default Login;
-//<div class="form-control-feedback invalid-feedback">Неправильный емейл или пароль</div>

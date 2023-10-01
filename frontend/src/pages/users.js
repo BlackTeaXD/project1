@@ -2,9 +2,12 @@ import React from 'react';
 import UserCard from '../components/users/userCard';
 
 const Users = (props) => {
-  const { users } = props;
+  const { users, getUserId } = props;
+  const deleteUserHandler = (id) => {
+    getUserId(id);
+  };
   const renderUsersList = users.map((user) => {
-    return <UserCard user={user} key={user.id} />;
+    return <UserCard user={user} key={user.id} clickHandler={deleteUserHandler} />;
   });
   return (
     <div className="container wrapper flex-grow-1">

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './header/index';
 import Main from '../pages/main';
 import Users from '../pages/users';
+import EditUser from '../pages/editUsers';
 import Login from '../pages/loginPage';
 import Signup from '../pages/signup';
 import Footer from './footer/index';
@@ -15,15 +16,6 @@ import NewStatus from '../pages/statuses/newStatus';
 import LabelsPage from '../pages/labels/index';
 import NewLabel from '../pages/labels/newLabel';
 
-const users = [
-  {
-    id: uniqueId(),
-    name: 'Stas',
-    lastName: 'Stas',
-    email: 'Stas@gmail.com',
-    password: 'iamstas',
-  },
-];
 const tasks = [
   {
     id: uniqueId(),
@@ -37,24 +29,73 @@ const tasks = [
   },
 ];
 function App() {
-  const LOCAL_STORAGE_KEY_STATUSES = 'statuses';
-  const [statuses, setStatus] = useState([]);
+  const LOCAL_STORAGE_TOKEN = 'token';
+  const [users, setUsers] = useState([]);
+  const [token, setToken] = useState('');
+  const getToken = (token) => {
+    setToken(token);
+  };
+  const exit = () => {
+    setToken('');
+    localStorage.setItem(LOCAL_STORAGE_TOKEN, '');
+  };
+  useEffect(() => {
+    const retriveToken = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TOKEN));
+    if (retriveToken) setToken(retriveToken);
+  }, []);
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_TOKEN, JSON.stringify(token));
+  }, [token]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetch(`http://localhost:8080/users`);
+        const body = await result.json();
+        setUsers(body);
+      } catch (err) {
+        // error handling code
+      }
+    };
+    fetchData();
+  }, []);
+  const removeUserHandler = async (id) => {
+    await fetch(`http://localhost:8080/user/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const newUsers = users.filter((user) => {
+      return user.id !== id;
+    });
+    setUsers(newUsers);
+  };
+  const updateUserHandler = async (user, id) => {
+    const response = await fetch(`http://localhost:8080/user/${id}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    });
+    console.log(response);
+  };
   const removeStatusHandler = (id) => {
     const newStatus = statuses.filter((status) => {
       return status.id !== id;
     });
     setStatus(newStatus);
   };
+  const LOCAL_STORAGE_KEY_STATUSES = 'statuses';
+  const [statuses, setStatus] = useState([]);
+
   const addStatusHandler = (status) => {
     setStatus([...statuses, { id: uniqueId(), ...status }]);
   };
-  useEffect(() => {
-    const retriveStatus = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_STATUSES));
-    if (retriveStatus) setStatus(retriveStatus);
-  }, []);
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY_STATUSES, JSON.stringify(statuses));
-  }, [statuses]);
+  // useEffect(() => {
+  //   const retriveStatus = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_STATUSES));
+  //   if (retriveStatus) setStatus(retriveStatus);
+  // }, []);
+  // useEffect(() => {
+  //   localStorage.setItem(LOCAL_STORAGE_KEY_STATUSES, JSON.stringify(statuses));
+  // }, [statuses]);
 
   const LOCAL_STORAGE_KEY_LABELS = 'labels';
   const [labels, setLabels] = useState([]);
@@ -67,21 +108,22 @@ function App() {
   const addLabelHandler = (label) => {
     setLabels([...labels, { id: uniqueId(), ...label }]);
   };
-  useEffect(() => {
-    const retriveLabels = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_LABELS));
-    if (retriveLabels) setLabels(retriveLabels);
-  }, []);
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY_LABELS, JSON.stringify(labels));
-  }, [labels]);
+  // useEffect(() => {
+  //   const retriveLabels = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_LABELS));
+  //   if (retriveLabels) setLabels(retriveLabels);
+  // }, []);
+  // useEffect(() => {
+  //   localStorage.setItem(LOCAL_STORAGE_KEY_LABELS, JSON.stringify(labels));
+  // }, [labels]);
 
   return (
     <Router>
-      <Header />
+      <Header token={token} exit={exit} />
       <Routes>
         <Route path="" element={<Main />} />
-        <Route path="/users" element={<Users users={users} />} />
-        <Route path="/session/new" element={<Login />} />
+        <Route path="/users" element={<Users users={users} getUserId={removeUserHandler} />} />
+        <Route path="/users/edit" element={<EditUser clickHandler={updateUserHandler} />} />
+        <Route path="/session/new" element={<Login getToken={getToken} />} />
         <Route path="/users/new" element={<Signup />} />
         <Route
           path="/labels"

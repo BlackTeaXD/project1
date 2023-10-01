@@ -1,21 +1,27 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 const UserCard = (props) => {
-  const { id , name, lastName, email} = props.user;
+  const { id, firstname, lastname, email, createdAt } = props.user;
   return (
     <tr>
       <td>{id}</td>
-      <td>{name} {lastName}</td>
+      <td>
+        {firstname} {lastname}
+      </td>
       <td>{email}</td>
-      <td></td>
+      <td>{createdAt}</td>
       <td>
         <div className="d-flex flex-wrap">
-          <a className="btn btn-primary me-1" href="/users/1/edit">
-            Изменить
-          </a>
-          <form action="/users/1" method="post">
-            <input name="_method" type="hidden" value="delete" />
-            <input className="btn btn-danger" type="submit" value="Удалить" />
-          </form>
+          <Link className="btn btn-primary me-1" to={'/users/edit'} state={{ user: props.user }}>
+            Изменить  
+          </Link>
+          <input
+            className="btn btn-danger"
+            type="submit"
+            value="Удалить"
+            onClick={() => props.clickHandler(id)}
+          />
         </div>
       </td>
     </tr>

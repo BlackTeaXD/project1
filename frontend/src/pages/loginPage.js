@@ -2,7 +2,7 @@ import React from 'react';
 import Login from '../components/login/index';
 import avatar from '../images/avatar.jpg';
 
-const LoginPage = () => {
+const LoginPage = (props) => {
   return (
     <div className="container wrapper flex-grow-1">
       <h1 className="display-4 fw-bold mt-4">Вход</h1>
@@ -11,9 +11,9 @@ const LoginPage = () => {
           <div className="card shadow-sm">
             <div className="card-body row p-5">
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                <img className="rounded-circle" src={avatar} alt='avatar'/>
+                <img className="rounded-circle" src={avatar} alt="avatar" />
               </div>
-              <Login />
+              <Login getToken={props.getToken} />
             </div>
           </div>
         </div>

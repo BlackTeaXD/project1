@@ -1,7 +1,56 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = () => {
+const Header = (props) => {
+  const logined = () => {
+    return props.token ? (
+      <ul className="navbar-nav justify-content-end w-100">
+        <li className="nav-item me-auto">
+          <Link className="nav-link" to="/users">
+            Пользователи
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/statuses">
+            Статусы
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/labels">
+            Метки
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/tasks">
+            Задачи
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/" onClick={props.exit}>
+            Выйти
+          </Link>
+        </li>
+      </ul>
+    ) : (
+      <ul className="navbar-nav justify-content-end w-100">
+        <li className="nav-item me-auto">
+          <Link className="nav-link" to="/users">
+            Пользователи
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/session/new">
+            Вход
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/users/new">
+            Регистрация
+          </Link>
+        </li>
+      </ul>
+    );
+  };
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white">
       <div className="container">
@@ -16,38 +65,7 @@ const Header = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarToggleExternalContent">
-          <ul className="navbar-nav justify-content-end w-100">
-            <li className="nav-item me-auto">
-              <Link className="nav-link" to="/users">
-                Пользователи
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/session/new">
-                Вход
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link  className="nav-link" to="/users/new">
-                Регистрация
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link  className="nav-link" to="/statuses">
-                Статусы
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link  className="nav-link" to="/labels">
-                Метки
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link  className="nav-link" to="tasks">
-                Задачи
-              </Link>
-            </li>
-          </ul>
+          {logined()}
         </div>
       </div>
     </nav>

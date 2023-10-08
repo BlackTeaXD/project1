@@ -4,6 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IamModule } from './iam/iam.module';
 import { UsersModule } from './users/users.module';
 import { CountersModule } from './counters/counters.module';
+import { LabelsModule } from './labels/labels.module';
+import { StatusesModule } from './statuses/statuses.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -12,6 +15,9 @@ import { CountersModule } from './counters/counters.module';
     IamModule,
     UsersModule,
     CountersModule,
+    LabelsModule,
+    StatusesModule,
+    TasksModule,
   ],
   controllers: [],
   providers: [],

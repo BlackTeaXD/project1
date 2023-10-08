@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, toJSON: { virtuals: true } })
 export class User extends Document {
   @Prop()
   id: number;
@@ -18,7 +18,13 @@ export class User extends Document {
   @Prop()
   password: string;
 
+  @Prop({ default: Date.now })
   createdAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.virtual('labels', {
+  ref: 'Label',
+  localField: 'id',
+  foreignField: 'userId',
+});

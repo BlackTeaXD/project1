@@ -15,10 +15,8 @@ export class UsersService {
 
   getUsers() {
     return this.userModel
-      .find(
-        {},
-        { _id: 0, id: 1, email: 1, firstname: 1, lastname: 1, createdAt: 1 },
-      )
+      .find()
+      .select({ _id: 0, id: 1, email: 1, firstname: 1, lastname: 1, createdAt: 1 })
       .exec();
   }
 

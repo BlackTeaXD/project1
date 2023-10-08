@@ -5,14 +5,14 @@ info:
 tags:
   - name: authentication
     description: Operations about registration and login
-  - name: user
-    description: Operations about user
-  - name: label
-    description: Operations about label
-  - name: status
-    description: Operations about status
-  - name: task
-    description: Operations about task
+  - name: users
+    description: Operations about users
+  - name: labels
+    description: Operations about labels
+  - name: statuses
+    description: Operations about statuses
+  - name: tasks
+    description: Operations about tasks
 
 paths:
   /sign-up:
@@ -123,7 +123,7 @@ paths:
   /users:
     get:
       tags:
-        - user
+        - users
       summary: Get all registered users
       description: Does not require user's authentication
       responses:
@@ -155,7 +155,7 @@ paths:
   /users/{userId}:
     patch:
       tags:
-        - user
+        - users
       summary: Update selected user
       description: Requires user's authentication
       security:
@@ -217,7 +217,7 @@ paths:
           description: User already exists
     delete:
       tags:
-        - user
+        - users
       summary: Delete selected user
       description: Requires user's authentication. User can't delete himself
       security:
@@ -237,6 +237,756 @@ paths:
           description: Unauthorised user access
         '403':
           description: Unable to delete this user
+
+  /labels:
+    get:
+      tags:
+        - labels
+      summary: Get all labels created by all users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int32
+                    title:
+                      type: string
+                      example: For work
+                    createdBy:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int32
+                        email:
+                          type: string
+                          format: email
+                        firstname:
+                          type: string
+                          example: Adam
+                        lastname:
+                          type: string
+                          example: Baker
+                    createdAt:
+                      type: string
+                      format: date-time
+        '401':
+          description: Unauthorised user access
+    post:
+      tags:
+        - labels
+      summary: Create label
+      security:
+        - bearerAuth: []
+      description: Take into account transformation of the title. To be unified, all titles should start with capital latter and be followed with lower case
+      requestBody:
+        description: Title should be unique accross all labels. Otherwise you will recive 409 error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: For work
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: int32
+                    example: 1
+                  title:
+                    type: string
+                    example: For work
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Label already exists
+  /labels/{labelId}:
+    get:
+      tags:
+        - labels
+      summary: Get label by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: labelId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: int32
+                    example: 1
+                  title:
+                    type: string
+                    example: For work
+                  createdAt:
+                    type: string
+                    format: date-time
+        '404':
+          description: Label not found
+    patch:
+      tags:
+        - labels
+      summary: Update label
+      security:
+        - bearerAuth: []
+      description: Take into account transformation of the title. To be unified, all titles should start with capital latter and be followed with lower case
+      parameters:
+        - name: labelId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Title should be unique accross all labels. Otherwise you will recive 409 error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: For work
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: int32
+                    example: 1
+                  title:
+                    type: string
+                    example: For work
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Label already exists
+    delete:
+      tags:
+        - labels
+      summary: Delete label
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: labelId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorised user access
+
+  /statuses:
+    get:
+      tags:
+        - statuses
+      summary: Get all statuses created by all users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int32
+                    title:
+                      type: string
+                      example: Urgent
+                    createdBy:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int32
+                        email:
+                          type: string
+                          format: email
+                        firstname:
+                          type: string
+                          example: Adam
+                        lastname:
+                          type: string
+                          example: Baker
+                    createdAt:
+                      type: string
+                      format: date-time
+        '401':
+          description: Unauthorised user access
+    post:
+      tags:
+        - statuses
+      security:
+        - bearerAuth: []
+      summary: Create status
+      description: Take into account transformation of the title. To be unified, all titles should start with capital latter and be followed with lower case
+      requestBody:
+        description: Title should be unique accross all statuses. Otherwise you will recive 409 error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: In progress
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: int32
+                    example: 1
+                  title:
+                    type: string
+                    example: Urgent
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Status already exists
+  /statuses/{statusId}:
+    get:
+      tags:
+        - statuses
+      security:
+        - bearerAuth: []
+      summary: Get task by id
+      parameters:
+        - name: statusId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: int32
+                    example: 1
+                  title:
+                    type: string
+                    example: Urgent
+                  createdAt:
+                    type: string
+                    format: date-time
+        '404':
+          description: Task not found
+    patch:
+      tags:
+        - statuses
+      security:
+        - bearerAuth: []
+      summary: Update status
+      description: Take into account transformation of the title. To be unified, all titles should start with capital latter and be followed with lower case
+      parameters:
+        - name: statusId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Title should be unique accross all statuses. Otherwise you will recive 409 error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Urgent
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: int32
+                    example: 1
+                  title:
+                    type: string
+                    example: Urgent
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Label already exists
+    delete:
+      tags:
+        - statuses
+      security:
+        - bearerAuth: []
+      summary: Delete status
+      parameters:
+        - name: statusId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorised user access
+
+  /tasks:
+    get:
+      tags:
+        - tasks
+      summary: Get tasks based on filters
+      description: Without filters will return all tasks created by all users
+      parameters:
+        - name: assignee
+          in: query
+          description: Identifier of the user
+          example: 1
+          schema:
+            type: number
+        - name: status
+          in: query
+          description: Identifier of the status
+          example: 1
+          schema:
+            type: number
+        - name: labels
+          in: query
+          description: Identifier of the label. Right now supports only one value intead of an array
+          example: 1
+          schema:
+            type: number
+        - name: selfAuthored
+          in: query
+          description: Skip this query parameter if you don't want to filter tasks by currently loged in user. Every string, including "true", will be treated as `true` value for this endpoint
+          example: true
+          schema:
+            type: string
+            example: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int32
+                    title:
+                      type: string
+                      example: Task at hand
+                    description:
+                      type: string
+                      example: Very detailed description
+                    status:
+                      type: string
+                      example: Done
+                    labels:
+                      type: array
+                      items:
+                        type: string
+                      example: ['For work', 'Urgent']
+                    assignee:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int32
+                        email:
+                          type: string
+                          format: email
+                        firstname:
+                          type: string
+                          example: Adam
+                        lastname:
+                          type: string
+                          example: Baker
+                    author:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int32
+                        email:
+                          type: string
+                          format: email
+                        firstname:
+                          type: string
+                          example: Adam
+                        lastname:
+                          type: string
+                          example: Baker
+                    createdAt:
+                      type: string
+                      format: date-time
+        '401':
+          description: Unauthorised user access
+    post:
+      tags:
+        - tasks
+      security:
+        - bearerAuth: []
+      summary: Create task
+      requestBody:
+        description: >
+          Title should be unique accross all tasks. Otherwise you will recive 409 error.
+          
+          
+          Description, labels and assignee are optional
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Cool task
+                description:
+                  type: string
+                  example: Very detailed description
+                statusId:
+                  type: number
+                  example: 1
+                labelIds:
+                  type: array
+                  items:
+                    type: number
+                  example: [1, 2]
+                assigneeId:
+                  type: number
+                  example: 47
+              required: [title, statusId]
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  title:
+                    type: string
+                    example: Cool task
+                  description:
+                    type: string
+                    example: Very detailed description
+                  status:
+                    type: string
+                    example: Done
+                  labels:
+                    type: array
+                    items:
+                      type: string
+                    example: ['For work', 'Urgent']
+                  assignee:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int32
+                      email:
+                        type: string
+                        format: email
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                  author:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int32
+                      email:
+                        type: string
+                        format: email
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Status already exists
+  /tasks/{taskId}:
+    get:
+      tags:
+        - tasks
+      security:
+        - bearerAuth: []
+      summary: Get task by id
+      parameters:
+        - name: taskId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  title:
+                    type: string
+                    example: Updated title
+                  description:
+                    type: string
+                    example: Updated description
+                  status:
+                    type: string
+                    example: Done
+                  labels:
+                    type: array
+                    items:
+                      type: string
+                    example: ['For work', 'Urgent']
+                  assignee:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int32
+                      email:
+                        type: string
+                        format: email
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                  author:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int32
+                      email:
+                        type: string
+                        format: email
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Task already exists
+    patch:
+      tags:
+        - tasks
+      security:
+        - bearerAuth: []
+      summary: Update task
+      parameters:
+        - name: taskId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Title should be unique accross all tasks. Otherwise you will recive 409 error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated title
+                description:
+                  type: string
+                  example: Updated description
+                assigneeId:
+                  type: number
+                  example: 1
+                statusId:
+                  type: number
+                  example: 2
+                labelIds:
+                  type: array
+                  items:
+                    type: number
+                  example: [1, 2]
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  title:
+                    type: string
+                    example: Updated title
+                  description:
+                    type: string
+                    example: Updated description
+                  status:
+                    type: string
+                    example: Done
+                  labels:
+                    type: array
+                    items:
+                      type: string
+                    example: ['For work', 'Urgent']
+                  assignee:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int32
+                      email:
+                        type: string
+                        format: email
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                  author:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int32
+                      email:
+                        type: string
+                        format: email
+                      firstname:
+                        type: string
+                        example: Adam
+                      lastname:
+                        type: string
+                        example: Baker
+                  createdAt:
+                    type: string
+                    format: date-time
+        '409':
+          description: Task already exists
+    delete:
+      tags:
+        - tasks
+      security:
+        - bearerAuth: []
+      summary: Delete task
+      parameters:
+        - name: taskId
+          in: path
+          description: Unique identifier from list
+          example: 1
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorised user access
 
 components:
   securitySchemes:

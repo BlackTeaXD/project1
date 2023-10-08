@@ -13,6 +13,7 @@ import { SequenceName } from '../../counters/enums/sequence-name.enum';
 import { User } from '../../users/enitities/user.entity';
 import jwtConfig from '../config/jwt.config';
 import { HashingService } from '../hashing/hashing.service';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { SignInRequestDto } from './dto/sign-in.dto';
 import { SignUpRequestDto } from './dto/sign-up.dto';
 
@@ -78,7 +79,7 @@ export class AuthenticationService {
 
   private generateAccessToken(user: User) {
     return this.jwtService.signAsync(
-      { sub: user.id, email: user.email },
+      { sub: user.id, email: user.email } as ActiveUserData,
       {
         secret: this.jwtConfiguration.secret,
         expiresIn: this.jwtConfiguration.accessTokenTtl,

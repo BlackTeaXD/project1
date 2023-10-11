@@ -827,13 +827,29 @@ paths:
                     type: string
                     example: Updated description
                   status:
-                    type: string
-                    example: Done
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      title:
+                        type: string
+                    example:
+                      id: 1
+                      title: Done
                   labels:
                     type: array
                     items:
-                      type: string
-                    example: ['For work', 'Urgent']
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        title:
+                          type: string
+                    example:
+                      - id: 1
+                        title: For work
+                      - id: 2
+                        title: Urgent
                   assignee:
                     type: object
                     properties:

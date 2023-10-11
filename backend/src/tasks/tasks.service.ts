@@ -90,7 +90,7 @@ export class TasksService {
   }
 
   async findOne(id: number) {
-    const task = await this.getOnePopulatedTask({ id });
+    const task = (await this.getDetailedPopulatedTasks({ id }))[0];
     if (!task) {
       throw new NotFoundException('Task not found');
     }
@@ -169,6 +169,77 @@ export class TasksService {
         createdAt: 1,
         status: '$status.title',
         labels: '$labels.title',
+        author: {
+          id: 1,
+          email: 1,
+          firstname: 1,
+          lastname: 1,
+        },
+        assignee: {
+          id: 1,
+          email: 1,
+          firstname: 1,
+          lastname: 1,
+        },
+      })
+      .unwind('$author')
+      .unwind('$status')
+      .unwind({ path: '$assignee', preserveNullAndEmptyArrays: true })
+      .addFields({
+        assignee: {
+          $cond: {
+            if: {
+              $ne: [{ $ifNull: ['$assignee', null] }, null],
+            },
+            then: '$assignee',
+            else: {},
+          },
+        },
+      });
+  }
+
+  private getDetailedPopulatedTasks(filters?: Record<string, string | number>) {
+    return this.taskModel
+      .aggregate()
+      .match(filters)
+      .lookup({
+        from: 'status',
+        localField: 'status',
+        foreignField: 'id',
+        as: 'status',
+      })
+      .lookup({
+        from: 'labels',
+        localField: 'labels',
+        foreignField: 'id',
+        as: 'labels',
+      })
+      .lookup({
+        from: 'users',
+        localField: 'author',
+        foreignField: 'id',
+        as: 'author',
+      })
+      .lookup({
+        from: 'users',
+        localField: 'assignee',
+        foreignField: 'id',
+        as: 'assignee',
+      })
+      .project({
+        _id: 0,
+        id: 1,
+        title: 1,
+        description: 1,
+        createdAt: 1,
+        status: {
+          id: 1,
+          title: 1,
+        },
+        labels: {
+          id: 1,
+          title: 1,
+        },
         author: {
           id: 1,
           email: 1,

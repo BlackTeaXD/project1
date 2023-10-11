@@ -1,5 +1,5 @@
 import React from 'react';
-import UserCard from '../components/users/userCard';
+import UserCard from '../components/users/UserCard';
 
 const Users = (props) => {
   const { users, getUserId } = props;

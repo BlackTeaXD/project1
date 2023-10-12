@@ -29,6 +29,13 @@ export class UsersController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  getUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getUser(id);
+  }
+
+  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   updateUser(

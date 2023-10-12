@@ -153,6 +153,48 @@ paths:
                       format: date-time
 
   /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Get selected user
+      description: Requires user's authentication
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          description: Unique identifier from list
+          example: 45
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  firstname:
+                    type: string
+                    example: Adam
+                  lastname:
+                    type: string
+                    example: Baker
+                  email:
+                    type: string
+                    format: email
+                  createdAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorised user access
+        '404':
+          description: User not found
     patch:
       tags:
         - users

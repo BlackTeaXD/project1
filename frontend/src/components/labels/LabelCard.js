@@ -1,18 +1,21 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const LabelCard = (props) => {
-  const { id, name, date } = props.label;
-  const change = (e) => {
-    e.preventDefault();
-  };
+  const { id, title, createdAt } = props.label;
+  const date = new Date(createdAt);
   return (
     <tr>
       <th>{id}</th>
-      <th>{name}</th>
-      <th>{date}</th>
+      <th>{title}</th>
+      <th>
+        {date.getDate()}-{date.getMonth() + 1}-{date.getFullYear()}
+      </th>
       <th>
         <div className="d-flex">
-          <input className="btn btn-primary me-1" type="button" value="Изменить" onClick={change} />
+          <Link className="btn btn-primary me-1" to={`/labels/${id}/edit`}>
+            Изменить
+          </Link>
           <input
             className="btn btn-danger"
             type="button"

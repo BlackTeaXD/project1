@@ -13,7 +13,7 @@ const LoginPage = (props) => {
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                 <img className="rounded-circle" src={avatar} alt="avatar" />
               </div>
-              <Login getToken={props.getToken} />
+              <Login login={props.login} />
             </div>
           </div>
         </div>

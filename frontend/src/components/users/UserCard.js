@@ -1,8 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const UserCard = (props) => {
   const { id, firstname, lastname, email, createdAt } = props.user;
+  const date = new Date(createdAt);
   return (
     <tr>
       <td>{id}</td>
@@ -10,11 +11,13 @@ const UserCard = (props) => {
         {firstname} {lastname}
       </td>
       <td>{email}</td>
-      <td>{createdAt}</td>
+      <td>
+        {date.getDate()}-{date.getMonth() + 1}-{date.getFullYear()}
+      </td>
       <td>
         <div className="d-flex flex-wrap">
-          <Link className="btn btn-primary me-1" to={'/users/edit'} state={{ user: props.user }}>
-            Изменить  
+          <Link className="btn btn-primary me-1" to={`/users/${id}/edit`}>
+            Изменить
           </Link>
           <input
             className="btn btn-danger"

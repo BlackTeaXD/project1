@@ -1,13 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import StatusCard from '../../components/statuses/StatusCard';
+import React from "react";
+import { Link } from "react-router-dom";
+import StatusCard from "../../components/statuses/StatusCard";
 
 const Statuses = (props) => {
   const deleteStatusHandler = (id) => {
     props.getStatusId(id);
   };
   const renderStatusList = props.statuses.map((status) => {
-    return <StatusCard status={status} key={status.id} clickHandler={deleteStatusHandler} />;
+    return (
+      <StatusCard
+        status={status}
+        key={status.id}
+        clickHandler={deleteStatusHandler}
+      />
+    );
   });
   return (
     <div className="container wrapper flex-grow-1">

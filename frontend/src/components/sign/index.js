@@ -1,32 +1,36 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Sign = () => {
   const [data, setData] = useState({
-    firstname: '',
-    lastname: '',
-    email: '',
-    password: '',
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
   });
   const navigate = useNavigate();
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/sign-up', {
-        method: 'POST',
+      await fetch("http://localhost:8080/sign-up", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+      }).then((res) => {
+        if (res.status === 201) {
+          toast.success("User registered");
+          navigate("/");
+        }
+        if(res.status === 400) toast.error("Bad request");
+        if(res.status === 409) toast.error("User already exists");
+        if(res.status === 500) toast.error("Something go wrong");
       });
-      const result = await response.json();
-      console.log('Success:', result);
-      setData('');
-      navigate('/');
     } catch (error) {
-      console.error('Error:', error);
+      toast.error('Error')
     }
-    
   };
   return (
     <div className="col-12 col-md-6 mt-3 mt-mb-0">

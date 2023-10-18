@@ -1,0 +1,15 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+#search .basic-single {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+}

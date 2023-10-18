@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Header = (props) => {
   const logined = () => {
-    return props.token ? (
+    return props.logined ? (
       <ul className="navbar-nav justify-content-end w-100">
         <li className="nav-item me-auto">
           <Link className="nav-link" to="/users">

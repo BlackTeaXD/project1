@@ -1,13 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { renderList } from '../../utils';
-import TaskCard from '../../components/tasks/TaskCard';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import TaskCard from "../../components/tasks/TaskCard";
+import Select from "react-select";
+import { options } from "../../utils";
 
 const Tasks = (props) => {
   const { labels, statuses, users, tasks } = props;
-  const renderTaskList = tasks.map((task) => {
-    return <TaskCard task={task} key={task.id} />;
+  const [searchTerm, setSearchTerm] = useState({
+    label: "",
+    status: "",
+    assignee: "",
+    author: false,
   });
+  const renderTaskList = tasks.map((task) => {
+    return (
+      <TaskCard task={task} key={task.id} clickHandler={props.getTaskId} />
+    );
+  });
+  const titledUsers = users.map((user) => ({
+    ...user,
+    title: `${user.firstname} ${user.lastname}`,
+  }));
+  const searchSubmit = (e) => {
+    e.preventDefault();
+    props.search(searchTerm);
+  };
   return (
     <div className="container wrapper flex-grow-1">
       <h1 className="display-4 fw-bold mt-4">Задачи</h1>
@@ -16,39 +33,60 @@ const Tasks = (props) => {
       </Link>
       <div className="card shadow-sm">
         <div className="card-body p-4">
-          <form action="/tasks" method="get">
+          <form id="search">
             <div className="row">
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label className="input-group-text" htmlFor="data_status">
-                    Статус
-                  </label>
-                  <select className="form-select" id="data_status" name="status">
-                    <option></option>
-                    {renderList(statuses)}
-                  </select>
+                  <label className="input-group-text">Статус</label>
+                  <Select
+                    placeholder=""
+                    options={options(statuses)}
+                    className="basic-single"
+                    classNamePrefix="select"
+                    value={searchTerm.status}
+                    onChange={(e) =>
+                      setSearchTerm((prevState) => ({
+                        ...prevState,
+                        status: e,
+                      }))
+                    }
+                  />
                 </div>
               </div>
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label className="input-group-text" htmlFor="data_executor">
-                    Исполнитель
-                  </label>
-                  <select className="form-select" id="data_executor" name="executor">
-                    <option></option>
-                    {renderList(users)}
-                  </select>
+                  <label className="input-group-text">Исполнитель</label>
+                  <Select
+                    placeholder=""
+                    options={options(titledUsers)}
+                    className="basic-single"
+                    classNamePrefix="select"
+                    value={searchTerm.assignee}
+                    onChange={(e) =>
+                      setSearchTerm((prevState) => ({
+                        ...prevState,
+                        assignee: e,
+                      }))
+                    }
+                  />
                 </div>
               </div>
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label className="input-group-text" htmlFor="data_label">
-                    Метка
-                  </label>
-                  <select className="form-select" id="data_label" name="label">
-                    <option></option>
-                    {renderList(labels)}
-                  </select>
+                  <label className="input-group-text">Метка</label>
+                  <Select
+                    placeholder=""
+                    options={options(labels)}
+                    className="basic-single"
+                    classNamePrefix="select"
+                    value={searchTerm.label}
+                    onChange={(e) =>
+                      setSearchTerm((prevState) => ({
+                        ...prevState,
+                        label: e,
+                      }))
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -58,12 +96,23 @@ const Tasks = (props) => {
                 id="data_isCreatorUser"
                 type="checkbox"
                 name="isCreatorUser"
+                onChange={() =>
+                  setSearchTerm((prevState) => ({
+                    ...prevState,
+                    author: !prevState.author,
+                  }))
+                }
               />
               <label className="form-check-label" htmlFor="data_isCreatorUser">
                 Только мои задачи
               </label>
             </div>
-            <input className="btn btn-primary" type="submit" value="Показать" />
+            <input
+              className="btn btn-primary"
+              type="submit"
+              value="Показать"
+              onClick={searchSubmit}
+            />
           </form>
         </div>
       </div>

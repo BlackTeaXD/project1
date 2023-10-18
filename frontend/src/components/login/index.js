@@ -1,32 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 const Login = (props) => {
   const [data, setData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const navigate = useNavigate();
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/sign-in', {
-        method: 'POST',
+      await fetch("http://localhost:8080/sign-in", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      console.log('Success:', result);
-      props.getToken(result.accessToken);
-      setData('');
-      navigate('/');
+      })
+        .then((res) => {
+          if (res.status === 401) toast.error("Incorrect email or password");
+          if (res.status === 400) toast.error("Incorrect request");
+          if (res.status === 500) toast.error("Something go wrong");
+          return res.json();
+        })
+        .then((data) => {
+          props.login({ accessToken: data.accessKey, id: data.user.id });
+          toast.success("Successfully logged in");
+          navigate("/");
+        });
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
+
   return (
     <div className="col-12 col-md-6 mt-3 mt-mb-0">
       <form>
@@ -37,7 +44,9 @@ const Login = (props) => {
             value={data.email}
             placeholder="Email"
             type="text"
-            onChange={(e) => setData((prevState) => ({ ...prevState, email: e.target.value }))}
+            onChange={(e) =>
+              setData((prevState) => ({ ...prevState, email: e.target.value }))
+            }
           />
           <label htmlFor="data_email">Email</label>
         </div>
@@ -48,11 +57,21 @@ const Login = (props) => {
             value={data.password}
             placeholder="Пароль"
             type="password"
-            onChange={(e) => setData((prevState) => ({ ...prevState, password: e.target.value }))}
+            onChange={(e) =>
+              setData((prevState) => ({
+                ...prevState,
+                password: e.target.value,
+              }))
+            }
           />
           <label htmlFor="data_password">Пароль</label>
         </div>
-        <input className="btn btn-primary" type="button" value="Войти" onClick={submit} />
+        <input
+          className="btn btn-primary"
+          type="button"
+          value="Войти"
+          onClick={submit}
+        />
       </form>
     </div>
   );

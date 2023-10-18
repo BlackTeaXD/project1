@@ -1,24 +1,36 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 const TaskCard = (props) => {
-  const { id, name, description, author, executor, date } = props.task;
+  const { id, title, status, author, assignee, createdAt } = props.task;
+  const date = new Date(createdAt);
   return (
     <tr>
       <td>{id}</td>
       <td>
-        <a href="/tasks/1">{name}</a>
+        <a href={`/tasks/${id}`}>{title}</a>
       </td>
-      <td>{description}</td>
-      <td>{author}</td>
-      <td>{executor}</td>
-      <td>{date}</td>
+      <td>{status}</td>
+      <td>
+        {author.firstname} {author.lastname}
+      </td>
+      <td>
+        {assignee.firstname} {assignee.lastname}
+      </td>
+      <td>
+        {date.getDate()}-{date.getMonth() + 1}-{date.getFullYear()}
+      </td>
       <td>
         <div className="d-flex">
-          <a className="btn btn-primary me-1" href="/tasks/1/edit">
+          <Link className="btn btn-primary me-1" to={`/tasks/${id}/edit`}>
             Изменить
-          </a>
-          <form action="/tasks/1" method="post">
-            <input name="_method" type="hidden" value="delete" />
-            <input className="btn btn-danger" type="submit" value="Удалить" />
+          </Link>
+          <form>
+            <input
+              className="btn btn-danger"
+              type="submit"
+              value="Удалить"
+              onClick={() => props.clickHandler(id)}
+            />
           </form>
         </div>
       </td>

@@ -40,6 +40,9 @@ paths:
                   type: string
                   format: password
                   example: FrsxYEsoQmkDQEw
+                createdAt:
+                  type: string
+                  format: date
         required: true
       responses:
         '201':

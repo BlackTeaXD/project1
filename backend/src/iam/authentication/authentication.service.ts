@@ -49,7 +49,14 @@ export class AuthenticationService {
         { ...signUpRequestDto, id, password },
         { new: true, upsert: true },
       )
-      .select({ _id: 0, id: 1, firstname: 1, lastname: 1, email: 1 })
+      .select({
+        _id: 0,
+        id: 1,
+        firstname: 1,
+        lastname: 1,
+        email: 1,
+        createdAt: 1,
+      })
       .exec();
     const accessToken = await this.generateAccessToken(user);
 

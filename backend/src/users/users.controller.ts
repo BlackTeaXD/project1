@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AccessTokenGuard } from '../iam/authentication/guards/access-token.guard';
+import { ActiveUser } from '../iam/decorators/active-user.decorator';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { GetUserResponseDto } from './dto/get-user.dto';
 import {
   UpdateUserRequestDto,
@@ -48,8 +50,11 @@ export class UsersController {
   @UseGuards(AccessTokenGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  async deleteUser(@Param('id', ParseIntPipe) id: number) {
-    await this.usersService.deleteUser(id);
+  async deleteUser(
+    @ActiveUser() user: ActiveUserData,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    await this.usersService.deleteUser(user, id);
     return;
   }
 }

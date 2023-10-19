@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException, ForbiddenException,
+  Injectable,
+  NotFoundException, UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { HashingService } from '../iam/hashing/hashing.service';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
 import { User } from './enitities/user.entity';
 
@@ -69,7 +74,10 @@ export class UsersService {
       .exec();
   }
 
-  deleteUser(id: number) {
+  deleteUser(user: ActiveUserData, id: number) {
+    if (user.sub === id) {
+      throw new ForbiddenException('Unable to delete this user');
+    }
     return this.userModel.deleteOne({ id }).exec();
   }
 }

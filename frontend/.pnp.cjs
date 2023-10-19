@@ -32,6 +32,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.17.0"],\
             ["@testing-library/react", "virtual:7ba8e07931c45115bac6e987dc79b3ef9da8e745ddb913b81446b1e4cc0307aa7b8f8834d95ee0be81d604d47ab7c682d1b4734b3e5c9ccb3b7d5af3a50a7ee1#npm:13.4.0"],\
             ["@testing-library/user-event", "virtual:7ba8e07931c45115bac6e987dc79b3ef9da8e745ddb913b81446b1e4cc0307aa7b8f8834d95ee0be81d604d47ab7c682d1b4734b3e5c9ccb3b7d5af3a50a7ee1#npm:13.5.0"],\
+            ["classnames", "npm:2.3.2"],\
             ["lodash", "npm:4.17.21"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:7ba8e07931c45115bac6e987dc79b3ef9da8e745ddb913b81446b1e4cc0307aa7b8f8834d95ee0be81d604d47ab7c682d1b4734b3e5c9ccb3b7d5af3a50a7ee1#npm:18.2.0"],\
@@ -7676,6 +7677,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["classnames", [\
+        ["npm:2.3.2", {\
+          "packageLocation": "./.yarn/cache/classnames-npm-2.3.2-d2fdae468d-2c62199789.zip/node_modules/classnames/",\
+          "packageDependencies": [\
+            ["classnames", "npm:2.3.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["clean-css", [\
         ["npm:4.2.4", {\
           "packageLocation": "./.yarn/cache/clean-css-npm-4.2.4-5d1d0f2f9b-045ff6fcf4.zip/node_modules/clean-css/",\
@@ -10845,6 +10855,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.17.0"],\
             ["@testing-library/react", "virtual:7ba8e07931c45115bac6e987dc79b3ef9da8e745ddb913b81446b1e4cc0307aa7b8f8834d95ee0be81d604d47ab7c682d1b4734b3e5c9ccb3b7d5af3a50a7ee1#npm:13.4.0"],\
             ["@testing-library/user-event", "virtual:7ba8e07931c45115bac6e987dc79b3ef9da8e745ddb913b81446b1e4cc0307aa7b8f8834d95ee0be81d604d47ab7c682d1b4734b3e5c9ccb3b7d5af3a50a7ee1#npm:13.5.0"],\
+            ["classnames", "npm:2.3.2"],\
             ["lodash", "npm:4.17.21"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:7ba8e07931c45115bac6e987dc79b3ef9da8e745ddb913b81446b1e4cc0307aa7b8f8834d95ee0be81d604d47ab7c682d1b4734b3e5c9ccb3b7d5af3a50a7ee1#npm:18.2.0"],\

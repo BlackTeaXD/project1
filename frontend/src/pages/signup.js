@@ -1,7 +1,7 @@
 import React from 'react';
 import avatar from '../images/avatar.jpg';
 import Sign from '../components/sign/index'
-const Signup = () => {
+const Signup = (props) => {
   return (
     <div className="container wrapper flex-grow-1">
       <h1 className="display-4 fw-bold mt-4">Регистрация</h1>
@@ -12,7 +12,7 @@ const Signup = () => {
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                 <img className="rounded-circle" src={avatar} alt="Тут может быть ваша реклама" />
               </div>
-              <Sign />
+              <Sign register={props.register}/>
             </div>
           </div>
         </div>

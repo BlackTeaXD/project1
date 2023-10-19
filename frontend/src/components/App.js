@@ -28,8 +28,8 @@ function App() {
   const [userData, setUserData] = useState({ accessToken: "", id: "" });
   const [labels, setLabels] = useState([]);
   const [statuses, setStatuses] = useState([]);
-  const [logined, setLogined] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const logined = !!userData.accessToken;
 
   useEffect(() => {
     const retriveData = JSON.parse(
@@ -44,7 +44,6 @@ function App() {
     };
     if (retriveData) {
       setUserData(retriveData);
-      setLogined(true);
     }
     fetchUsers();
   }, []);
@@ -60,7 +59,7 @@ function App() {
         })
           .then((res) => {
             if (res.status === 401) {
-              toast.error("Error");
+              toast.error("Status error");
               return;
             }
             if (res.status === 200) return res.json();
@@ -74,7 +73,7 @@ function App() {
         })
           .then((res) => {
             if (res.status === 401) {
-              toast.error("Error");
+              toast.error("Lalel error");
               return;
             }
             if (res.status === 200) return res.json();
@@ -88,7 +87,7 @@ function App() {
         })
           .then((res) => {
             if (res.status === 401) {
-              toast.error("Error");
+              toast.error("Task error");
               return;
             }
             if (res.status === 200) return res.json();
@@ -105,14 +104,10 @@ function App() {
 
   const exit = () => {
     setUserData({});
-    setLogined(false);
     localStorage.removeItem(LOCAL_STORAGE_DATA_TOKEN);
   };
 
-  const login = (data) => {
-    setUserData(data);
-    setLogined(true);
-  };
+  const login = (data) => setUserData(data);
 
   // User function
 
@@ -135,6 +130,7 @@ function App() {
 
   const updateUserHandler = async (user) => {
     const { id } = user;
+
     fetch(`http://localhost:8080/users/${id}`, {
       method: "PATCH",
       headers: {
@@ -163,10 +159,13 @@ function App() {
       });
   };
 
+  const addUserHandler = (user) => setUsers([...users, { ...user }]);
+
   // Status functions
 
   const updateStatusHandler = async (status) => {
     const { id } = status;
+
     fetch(`http://localhost:8080/statuses/${id}`, {
       method: "PATCH",
       headers: {
@@ -211,10 +210,8 @@ function App() {
     });
   };
 
-  const addStatusHandler = (status) => {
+  const addStatusHandler = (status) =>
     setStatuses([...statuses, { ...status }]);
-  };
-
   //  Labels functions
 
   const updateLabelsHandler = async (label) => {
@@ -263,10 +260,7 @@ function App() {
     });
   };
 
-  const addLabelHandler = (label) => {
-    setLabels([...labels, { ...label }]);
-  };
-
+  const addLabelHandler = (label) => setLabels([...labels, { ...label }]);
   // Task functions
 
   const updateTasksHandler = async (task) => {
@@ -316,9 +310,7 @@ function App() {
     });
   };
 
-  const addTaskHandler = (task) => {
-    setTasks([...tasks, { ...task }]);
-  };
+  const addTaskHandler = (task) => setTasks([...tasks, { ...task }]);
 
   const search = (searchTerm) => {
     fetch(
@@ -364,9 +356,18 @@ function App() {
 
         <Route
           path="/users"
-          element={<Users users={users} getUserId={removeUserHandler} />}
+          element={
+            <Users
+              users={users}
+              getUserId={removeUserHandler}
+              currentUser={userData.id}
+            />
+          }
         />
-        <Route path="/users/new" element={<Signup />} />
+        <Route
+          path="/users/new"
+          element={<Signup register={addUserHandler} />}
+        />
         <Route
           path="/users/:id/edit"
           element={

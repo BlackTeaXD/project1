@@ -109,7 +109,12 @@ export class TasksService {
       this.statusModel.findOne({ id: updateTaskRequestDto?.statusId }).exec(),
       this.labelModel.find({ id: updateTaskRequestDto?.labelIds }).exec(),
     ]);
-    const labelIds = rawLabels.map((label) => label.id);
+    let labelIds = rawLabels.map((label) => label.id);
+    if (!updateTaskRequestDto.labelIds.length) {
+      labelIds = [];
+    } else {
+      labelIds = labelIds.length ? labelIds : null;
+    }
     const statusId = status?.id;
     const assigneeId = assignee?.id;
 
@@ -117,7 +122,7 @@ export class TasksService {
       {
         title: updateTaskRequestDto.title,
         description: updateTaskRequestDto.description,
-        labels: labelIds.length ? labelIds : null,
+        labels: labelIds,
         status: statusId,
         assignee: assigneeId,
       },

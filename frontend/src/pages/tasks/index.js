@@ -44,6 +44,7 @@ const Tasks = (props) => {
                     className="basic-single"
                     classNamePrefix="select"
                     value={searchTerm.status}
+                    isClearable={true}
                     onChange={(e) =>
                       setSearchTerm((prevState) => ({
                         ...prevState,
@@ -62,6 +63,7 @@ const Tasks = (props) => {
                     className="basic-single"
                     classNamePrefix="select"
                     value={searchTerm.assignee}
+                    isClearable={true}
                     onChange={(e) =>
                       setSearchTerm((prevState) => ({
                         ...prevState,
@@ -80,6 +82,7 @@ const Tasks = (props) => {
                     className="basic-single"
                     classNamePrefix="select"
                     value={searchTerm.label}
+                    isClearable={true}
                     onChange={(e) =>
                       setSearchTerm((prevState) => ({
                         ...prevState,

@@ -313,18 +313,28 @@ function App() {
   const addTaskHandler = (task) => setTasks([...tasks, { ...task }]);
 
   const search = (searchTerm) => {
-    fetch(
-      `http://localhost:8080/tasks?assignee=${searchTerm.assignee.value}&status=${searchTerm.status.value}&labels=${searchTerm.label.value}&selfAuthored=${searchTerm.author}}`,
-      {
-        headers: {
-          Authorization: `Bearer ${userData.accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    const assignee = searchTerm.assignee.value
+      ? `assignee=${searchTerm.assignee.value}`
+      : null;
+    const status = searchTerm.status.value
+      ? `status=${searchTerm.status.value}`
+      : null;
+    const labels = searchTerm.label.value
+      ? `labels=${searchTerm.label.value}`
+      : null;
+    const author = searchTerm.author
+      ? `selfAuthored=true`
+      : null;
+    const queryParams = [assignee, status, labels, author].filter((element) => element).join('&');
+    fetch(`http://localhost:8080/tasks?${queryParams}`, {
+      headers: {
+        Authorization: `Bearer ${userData.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        if (data.length === 0) toast.error("Nothing found");
+        if (data.length === 0) toast.error("Ничего не найдено");
         return setSearchResult(data);
       });
   };
@@ -444,7 +454,7 @@ function App() {
               <EditStatus
                 clickHandler={updateStatusHandler}
                 token={userData.accessToken}
-              />{" "}
+              />
             </ProtectedRoute>
           }
         />
@@ -498,7 +508,7 @@ function App() {
         <Route
           path="/tasks/:id"
           element={
-            <ProtectedRoute logined={logined}>
+            <ProtectedRoute logined={userData.accessToken}>
               <TaskPage
                 clickHandler={removeTaskHandler}
                 token={userData.accessToken}

@@ -5,7 +5,6 @@ const ProtectedRoute = ({ logined, children }) => {
   // if (!logined) {
   //   return <Navigate to="/session/new" replace />;
   // }
-
   return children;
 };
 

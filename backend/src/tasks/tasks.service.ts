@@ -129,7 +129,15 @@ export class TasksService {
       _.identity,
     );
 
-    await this.taskModel.updateOne({ id }, update);
+    try {
+      await this.taskModel.updateOne({ id }, update);
+    } catch (error) {
+      const MongoDuplicationKeyErrorCode = 11000;
+      if (error.code === MongoDuplicationKeyErrorCode) {
+        throw new ConflictException('Task already exists');
+      }
+      throw error;
+    }
 
     return this.getOnePopulatedTask({ id });
   }

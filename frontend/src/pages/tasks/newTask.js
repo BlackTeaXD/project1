@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
+import cn from "classnames";
 import { useNavigate } from "react-router-dom";
 import { options } from "../../utils";
 import toast from "react-hot-toast";
@@ -18,16 +19,24 @@ const NewTask = (props) => {
     assignee: "",
     labels: [],
   });
+  const [isError, setIsError] = useState(false);
+  const errorMessage = "Заполните поле";
+  const required = (className) => cn(className, { "is-invalid": isError });
+
   const submit = (e) => {
     e.preventDefault();
-    const data = {
-      title: task.title,
-      description: task.description,
-      statusId: task.status.value,
-      labelIds: task.labels.map((label) => label.value),
-      assigneeId: task.assignee.value,
-    };
+    if (!task.title || !task.status || !task.assignee) {
+      setIsError(true);
+      return;
+    }
     const post = async () => {
+      const data = {
+        title: task.title,
+        description: task.description,
+        statusId: task.status.value,
+        labelIds: task.labels.map((label) => label.value),
+        assigneeId: task.assignee.value,
+      };
       try {
         fetch("http://localhost:8080/tasks", {
           method: "POST",
@@ -39,20 +48,23 @@ const NewTask = (props) => {
         })
           .then((res) => {
             if (res.status === 409) {
-              toast.error("Task already exists");
+              setIsError(true);
+              toast.error("Такая задача уже существует");
               return;
             }
             if (res.status === 201) {
-              toast.success("Task successfully added");
+              toast.success("Задача успешно добавлена");
               return res.json();
             }
           })
           .then((data) => {
-            if (data) props.addTaskHandler(data);
-            navigate("/tasks");
+            if (data) {
+              setIsError(false);
+              props.addTaskHandler(data);
+              navigate("/tasks");
+            }
           });
       } catch (error) {
-        console.error("Error:", error);
       }
     };
     post();
@@ -63,7 +75,7 @@ const NewTask = (props) => {
       <form>
         <div className="form-floating mb-3">
           <input
-            className="form-control"
+            className={required("form-control")}
             id="data_name"
             name="data[name]"
             value={task.title}
@@ -76,7 +88,12 @@ const NewTask = (props) => {
               }))
             }
           />
-          <label htmlFor="data_name">Наименование</label>
+          <label htmlFor="data_name">
+            Наименование<span className="text-danger fw-bold">*</span>
+          </label>
+          {isError && !task.title ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
         </div>
         <div className="mb-3">
           <label htmlFor="data_description">Описание</label>
@@ -95,31 +112,45 @@ const NewTask = (props) => {
           ></textarea>
         </div>
         <div className="mb-3">
-          <label htmlFor="data_statusId">Статус</label>
+          <label htmlFor="data_statusId">
+            Статус<span className="text-danger fw-bold">*</span>
+          </label>
           <Select
             placeholder=""
             options={options(statuses)}
-            className="basic-single"
+            className={required("basic-single")}
             classNamePrefix="select"
             value={task.status}
+            isClearable={true}
             onChange={(e) =>
               setTask((prevState) => ({ ...prevState, status: e }))
             }
           />
+          {isError && !task.status ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
         </div>
+
         <div className="mb-3">
-          <label htmlFor="data_executorId">Исполнитель</label>
+          <label htmlFor="data_executorId">
+            Исполнитель<span className="text-danger fw-bold">*</span>
+          </label>
           <Select
             placeholder=""
             options={options(titledUsers)}
-            className="basic-single"
+            className={required("basic-single")}
             classNamePrefix="select"
             value={task.assignee}
+            isClearable={true}
             onChange={(e) =>
               setTask((prevState) => ({ ...prevState, assignee: e }))
             }
           />
+          {isError && !task.assignee ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
         </div>
+
         <div className="mb-3">
           <label htmlFor="data_labels">Метки</label>
           <Select
@@ -129,6 +160,7 @@ const NewTask = (props) => {
             className="basic-multi-select"
             classNamePrefix="select"
             value={task.labels}
+            isClearable={true}
             onChange={(e) =>
               setTask((prevState) => ({ ...prevState, labels: e }))
             }

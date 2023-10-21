@@ -26,7 +26,7 @@ const TaskPage = (props) => {
         .then((res) => {
           if (res.status === 200) return res.json();
           if (res.status === 404) {
-            toast.error("Task not found");
+            toast.error("Задача не найдена");
             navigate("/tasks");
           }
         })

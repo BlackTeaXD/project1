@@ -32,7 +32,11 @@ const Sign = (props) => {
             return res.json();
           } 
 
-          if (res.status === 400) toast.error("Некорректный ввод");
+          if (res.status === 400) {
+            toast.error("Неправильный формат email");
+            setErrorMessage("Неправильный формат email")
+          }
+
           if (res.status === 409)
             toast.error("Такой пользователь уже существует");
           if (res.status === 500) toast.error("Что-то пошла не так");
@@ -104,7 +108,7 @@ const Sign = (props) => {
           />
           <label htmlFor="data_email">Email</label>
           {isError ? (
-            <div className="form-control-feedback invalid-feedback">
+            <div className="error-message">
               {errorMessage}
             </div>
           ) : null}

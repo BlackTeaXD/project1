@@ -263,35 +263,13 @@ function App() {
   const addLabelHandler = (label) => setLabels([...labels, { ...label }]);
   // Task functions
 
-  const updateTasksHandler = async (task) => {
-    const { id } = task;
-
-    fetch(`http://localhost:8080/tasks/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(task),
-    })
-      .then((res) => {
-        if (res.status === 409) {
-          toast.error("Task already exists");
-          return;
-        }
-        if (res.status === 200) {
-          toast.success("Updated");
-          return res.json();
-        }
+  const updateTasksHandler = async (data) => {
+    const { id } = data;
+    setTasks(
+      tasks.map((task) => {
+        return task.id === +id ? data : task;
       })
-      .then((data) => {
-        if (data)
-          setTasks(
-            tasks.map((task) => {
-              return task.id === +id ? data : task;
-            })
-          );
-      });
+    );
   };
 
   const removeTaskHandler = async (id) => {
@@ -306,7 +284,7 @@ function App() {
         });
         setTasks(newTasks);
       }
-      if (res.status === 401) toast.error("Unauthorised user access");
+      if (res.status === 401) toast.error("Несанкционированный доступ ");
     });
   };
 
@@ -322,10 +300,10 @@ function App() {
     const labels = searchTerm.label.value
       ? `labels=${searchTerm.label.value}`
       : null;
-    const author = searchTerm.author
-      ? `selfAuthored=true`
-      : null;
-    const queryParams = [assignee, status, labels, author].filter((element) => element).join('&');
+    const author = searchTerm.author ? `selfAuthored=true` : null;
+    const queryParams = [assignee, status, labels, author]
+      .filter((element) => element)
+      .join("&");
     fetch(`http://localhost:8080/tasks?${queryParams}`, {
       headers: {
         Authorization: `Bearer ${userData.accessToken}`,

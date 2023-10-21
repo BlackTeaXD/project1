@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
+import toast from "react-hot-toast";
+import cn from "classnames";
 import Select from "react-select";
 import { options } from "../../utils";
 
@@ -8,6 +10,9 @@ const EditTask = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [task, setTask] = useState({ title: "" });
+  const [isError, setIsError] = useState(false);
+  const errorMessage = "Заполните поле";
+  const required = (className) => cn(className, { "is-invalid": isError });
   const titledUsers = users.map((user) => ({
     ...user,
     title: `${user.firstname} ${user.lastname}`,
@@ -39,8 +44,13 @@ const EditTask = (props) => {
     };
     if (token) getTask();
   }, [id, token]);
+
   const edit = (e) => {
     e.preventDefault();
+    if (!task.title || !task.status || !task.assignee) {
+      setIsError(true);
+      return;
+    }
     const data = {
       id: id,
       title: task.title,
@@ -49,8 +59,34 @@ const EditTask = (props) => {
       labelIds: task.labels.map((label) => label.value),
       assigneeId: task.assignee.value,
     };
-    props.clickHandler(data);
-    navigate("/tasks");
+    try {
+      fetch(`http://localhost:8080/tasks/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => {
+        if (res.status === 409) {
+          toast.error("Такая задача уже существует");
+          return;
+        }
+        if (res.status === 200) {
+          toast.success("Обновлено");
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (data) {
+          props.clickHandler(data);
+          navigate("/tasks");
+        }
+      });
+    } catch (error) {
+      console.log(error)
+    }
   };
   return (
     <div className="container wrapper flex-grow-1">
@@ -58,7 +94,7 @@ const EditTask = (props) => {
       <form>
         <div className="form-floating mb-3">
           <input
-            className="form-control"
+            className={required("form-control")}
             id="data_name"
             name="data[name]"
             value={task.title}
@@ -71,7 +107,12 @@ const EditTask = (props) => {
               }))
             }
           />
-          <label htmlFor="data_name">Наименование</label>
+          <label htmlFor="data_name">
+            Наименование<span className="text-danger fw-bold">*</span>
+          </label>
+          {isError && !task.title ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
         </div>
         <div className="mb-3">
           <label htmlFor="data_description">Описание</label>
@@ -90,29 +131,41 @@ const EditTask = (props) => {
           ></textarea>
         </div>
         <div className="mb-3">
-          <label>Статус</label>
+          <label>
+            Статус<span className="text-danger fw-bold">*</span>
+          </label>
           <Select
             options={options(statuses)}
-            className="basic-single"
+            className={required("basic-single")}
             classNamePrefix="select"
             value={task.status}
+            isClearable={true}
             onChange={(e) =>
               setTask((prevState) => ({ ...prevState, status: e }))
             }
           />
+          {isError && !task.status ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
         </div>
         <div className="mb-3">
-          <label>Исполнитель</label>
+          <label>
+            Исполнитель<span className="text-danger fw-bold">*</span>
+          </label>
           <Select
             placeholder=""
             options={options(titledUsers)}
-            className="basic-single"
+            className={required("basic-single")}
             classNamePrefix="select"
+            isClearable={true}
             value={task.assignee}
             onChange={(e) =>
               setTask((prevState) => ({ ...prevState, assignee: e }))
             }
           />
+          {isError && !task.assignee ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
         </div>
         <div className="mb-3">
           <label>Метки</label>

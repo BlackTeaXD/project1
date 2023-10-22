@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 const EditUser = (props) => {
   const { id } = useParams();
@@ -33,8 +34,30 @@ const EditUser = (props) => {
   }, [id, token]);
   const edit = (e) => {
     e.preventDefault();
-    props.clickHandler(user);
-    navigate("/users");
+    fetch(`http://localhost:8080/users/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((res) => {
+        if (res.status === 409) {
+          toast.error("Такой пользователь уже существует");
+          return;
+        }
+        if (res.status === 200) {
+          toast.success("Обновлено");
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (data) {
+          props.clickHandler(user);
+          navigate("/users");
+        }
+      });
   };
   return (
     <div className="container wrapper flex-grow-1">

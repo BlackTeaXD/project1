@@ -129,35 +129,13 @@ function App() {
     });
   };
 
-  const updateUserHandler = async (user) => {
-    const { id } = user;
-
-    fetch(`http://localhost:8080/users/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((res) => {
-        if (res.status === 409) {
-          toast.error("Такой пользователь уже существует");
-          return;
-        }
-        if (res.status === 200) {
-          toast.success("Обновлено");
-          return res.json();
-        }
+  const updateUserHandler = async (data) => {
+    const { id } = data;
+    setUsers(
+      users.map((user) => {
+        return user.id === id ? { ...data } : user;
       })
-      .then((data) => {
-        if (data)
-          setUsers(
-            users.map((user) => {
-              return user.id === id ? { ...data } : user;
-            })
-          );
-      });
+    );
   };
 
   const addUserHandler = (user) => setUsers([...users, { ...user }]);

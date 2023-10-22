@@ -12,6 +12,7 @@ const Tasks = (props) => {
     assignee: "",
     author: false,
   });
+  const [isSearched, setIsSearched] = useState(false);
   const renderTaskList = tasks.map((task) => {
     return (
       <TaskCard task={task} key={task.id} clickHandler={props.getTaskId} />
@@ -23,6 +24,7 @@ const Tasks = (props) => {
   }));
   const searchSubmit = (e) => {
     e.preventDefault();
+    setIsSearched(true);
     props.search(searchTerm);
   };
   return (
@@ -59,7 +61,9 @@ const Tasks = (props) => {
               </div>
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label htmlFor="data_assignee" className="input-group-text">Исполнитель</label>
+                  <label htmlFor="data_assignee" className="input-group-text">
+                    Исполнитель
+                  </label>
                   <Select
                     placeholder=""
                     options={options(titledUsers)}
@@ -79,7 +83,9 @@ const Tasks = (props) => {
               </div>
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label htmlFor="data_labels" className="input-group-text">Метка</label>
+                  <label htmlFor="data_labels" className="input-group-text">
+                    Метка
+                  </label>
                   <Select
                     placeholder=""
                     options={options(labels)}
@@ -124,22 +130,28 @@ const Tasks = (props) => {
           </form>
         </div>
       </div>
-      <div className="table-responsive">
-        <table className="table table-borderless table-striped mt-5 bg-white">
-          <thead>
-            <tr>
-              <th className="py-3">ID</th>
-              <th className="py-3">Наименование</th>
-              <th className="py-3">Статус</th>
-              <th className="py-3">Автор</th>
-              <th className="py-3">Исполнитель</th>
-              <th className="py-3">Дата создания</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>{renderTaskList}</tbody>
-        </table>
-      </div>
+      {props.tasks.length === 0 ? (
+        <p className="lead fw-bold">
+          {isSearched ? "Ничего не найдено" : "Здесь пока ничего нет"}
+        </p>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-borderless table-striped mt-5 bg-white">
+            <thead>
+              <tr>
+                <th className="py-3">ID</th>
+                <th className="py-3">Наименование</th>
+                <th className="py-3">Статус</th>
+                <th className="py-3">Автор</th>
+                <th className="py-3">Исполнитель</th>
+                <th className="py-3">Дата создания</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>{renderTaskList}</tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

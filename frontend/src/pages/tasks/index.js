@@ -37,12 +37,15 @@ const Tasks = (props) => {
             <div className="row">
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label className="input-group-text">Статус</label>
+                  <label htmlFor="data_status" className="input-group-text">
+                    Статус
+                  </label>
                   <Select
                     placeholder=""
                     options={options(statuses)}
                     className="basic-single"
                     classNamePrefix="select"
+                    inputId="data_status"
                     value={searchTerm.status}
                     isClearable={true}
                     onChange={(e) =>
@@ -56,12 +59,13 @@ const Tasks = (props) => {
               </div>
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label className="input-group-text">Исполнитель</label>
+                  <label htmlFor="data_assignee" className="input-group-text">Исполнитель</label>
                   <Select
                     placeholder=""
                     options={options(titledUsers)}
                     className="basic-single"
                     classNamePrefix="select"
+                    inputId="data_assignee"
                     value={searchTerm.assignee}
                     isClearable={true}
                     onChange={(e) =>
@@ -75,12 +79,13 @@ const Tasks = (props) => {
               </div>
               <div className="col-12 col-md">
                 <div className="input-group mb-3">
-                  <label className="input-group-text">Метка</label>
+                  <label htmlFor="data_labels" className="input-group-text">Метка</label>
                   <Select
                     placeholder=""
                     options={options(labels)}
                     className="basic-single"
                     classNamePrefix="select"
+                    inputId="data_labels"
                     value={searchTerm.label}
                     isClearable={true}
                     onChange={(e) =>

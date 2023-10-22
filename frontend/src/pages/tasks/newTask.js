@@ -112,7 +112,7 @@ const NewTask = (props) => {
           ></textarea>
         </div>
         <div className="mb-3">
-          <label htmlFor="data_statusId">
+          <label htmlFor="data_status">
             Статус<span className="text-danger fw-bold">*</span>
           </label>
           <Select
@@ -120,6 +120,7 @@ const NewTask = (props) => {
             options={options(statuses)}
             className={required("basic-single")}
             classNamePrefix="select"
+            inputId="data_status"
             value={task.status}
             isClearable={true}
             onChange={(e) =>
@@ -132,7 +133,7 @@ const NewTask = (props) => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="data_executorId">
+          <label htmlFor="data_assignee">
             Исполнитель<span className="text-danger fw-bold">*</span>
           </label>
           <Select
@@ -140,6 +141,7 @@ const NewTask = (props) => {
             options={options(titledUsers)}
             className={required("basic-single")}
             classNamePrefix="select"
+            inputId="data_assignee"
             value={task.assignee}
             isClearable={true}
             onChange={(e) =>
@@ -159,6 +161,7 @@ const NewTask = (props) => {
             options={options(labels)}
             className="basic-multi-select"
             classNamePrefix="select"
+            inputId="data_labels"
             value={task.labels}
             isClearable={true}
             onChange={(e) =>

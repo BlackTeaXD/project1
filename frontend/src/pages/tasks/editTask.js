@@ -51,41 +51,43 @@ const EditTask = (props) => {
       setIsError(true);
       return;
     }
-    const data = {
-      id: id,
-      title: task.title,
-      description: task.description,
-      statusId: task.status.value,
-      labelIds: task.labels.map((label) => label.value),
-      assigneeId: task.assignee.value,
-    };
     try {
+      const data = {
+        id: id,
+        title: task.title,
+        description: task.description,
+        statusId: task.status.value,
+        labelIds: task.labels.map((label) => label.value),
+        assigneeId: task.assignee.value,
+      };
       fetch(`http://localhost:8080/tasks/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        if (res.status === 409) {
-          toast.error("Такая задача уже существует");
-          return;
-        }
-        if (res.status === 200) {
-          toast.success("Обновлено");
-          return res.json();
-        }
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       })
-      .then((data) => {
-        if (data) {
-          props.clickHandler(data);
-          navigate("/tasks");
-        }
-      });
+        .then((res) => {
+          if (res.status === 409) {
+            toast.error("Такая задача уже существует");
+            setIsError(true);
+            return;
+          }
+          if (res.status === 200) {
+            toast.success("Обновлено");
+            setIsError(false);
+            return res.json();
+          }
+        })
+        .then((data) => {
+          if (data) {
+            props.clickHandler(data);
+            navigate("/tasks");
+          }
+        });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
   return (
@@ -131,13 +133,14 @@ const EditTask = (props) => {
           ></textarea>
         </div>
         <div className="mb-3">
-          <label>
+          <label htmlFor="data_status">
             Статус<span className="text-danger fw-bold">*</span>
           </label>
           <Select
             options={options(statuses)}
             className={required("basic-single")}
             classNamePrefix="select"
+            inputId="data_status"
             value={task.status}
             isClearable={true}
             onChange={(e) =>
@@ -149,7 +152,7 @@ const EditTask = (props) => {
           ) : null}
         </div>
         <div className="mb-3">
-          <label>
+          <label htmlFor="data_assignee">
             Исполнитель<span className="text-danger fw-bold">*</span>
           </label>
           <Select
@@ -157,6 +160,7 @@ const EditTask = (props) => {
             options={options(titledUsers)}
             className={required("basic-single")}
             classNamePrefix="select"
+            inputId="data_assignee"
             isClearable={true}
             value={task.assignee}
             onChange={(e) =>
@@ -168,13 +172,14 @@ const EditTask = (props) => {
           ) : null}
         </div>
         <div className="mb-3">
-          <label>Метки</label>
+          <label htmlFor="data_labels">Метки</label>
           <Select
             isMulti
             placeholder=""
             options={options(labels)}
             className="basic-multi-select"
             classNamePrefix="select"
+            inputId="data_labels"
             value={task.labels}
             onChange={(e) =>
               setTask((prevState) => ({ ...prevState, labels: e }))

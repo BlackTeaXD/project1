@@ -59,7 +59,7 @@ function App() {
         })
           .then((res) => {
             if (res.status === 401) {
-              toast.error("Status error");
+              exit();
               return;
             }
             if (res.status === 200) return res.json();
@@ -73,7 +73,7 @@ function App() {
         })
           .then((res) => {
             if (res.status === 401) {
-              toast.error("Lalel error");
+              exit();
               return;
             }
             if (res.status === 200) return res.json();
@@ -87,7 +87,7 @@ function App() {
         })
           .then((res) => {
             if (res.status === 401) {
-              toast.error("Task error");
+              exit();
               return;
             }
             if (res.status === 200) return res.json();
@@ -116,10 +116,11 @@ function App() {
       method: "DELETE",
       headers: { Authorization: `Bearer ${userData.accessToken}` },
     }).then((res) => {
-      if (res.status === 403) toast.error("Unable to delete this user");
-      if (res.status === 401) toast.error("Unauthorised user access");
+      if (res.status === 403)
+        toast.error("Невозможно удалить этого пользователя");
+      if (res.status === 401) toast.error("Несанкционированный доступ");
       if (res.status === 200) {
-        toast.success("Deleted");
+        toast.success("Удалено");
         const newUsers = users.filter((user) => {
           return user.id !== id;
         });
@@ -141,11 +142,11 @@ function App() {
     })
       .then((res) => {
         if (res.status === 409) {
-          toast.error("User already exists");
+          toast.error("Такой пользователь уже существует");
           return;
         }
         if (res.status === 200) {
-          toast.success("Updated");
+          toast.success("Обновлено");
           return res.json();
         }
       })
@@ -163,35 +164,13 @@ function App() {
 
   // Status functions
 
-  const updateStatusHandler = async (status) => {
-    const { id } = status;
-
-    fetch(`http://localhost:8080/statuses/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(status),
-    })
-      .then((res) => {
-        if (res.status === 409) {
-          toast.error("Status already exists");
-          return;
-        }
-        if (res.status === 200) {
-          toast.success("Updated");
-          return res.json();
-        }
+  const updateStatusHandler = async (data) => {
+    const { id } = data;
+    setStatuses(
+      statuses.map((status) => {
+        return status.id === id ? { ...data } : status;
       })
-      .then((data) => {
-        if (data)
-          setStatuses(
-            statuses.map((status) => {
-              return status.id === id ? { ...data } : status;
-            })
-          );
-      });
+    );
   };
 
   const removeStatusHandler = async (id) => {
@@ -200,48 +179,28 @@ function App() {
       headers: { Authorization: `Bearer ${userData.accessToken}` },
     }).then((res) => {
       if (res.status === 200) {
-        toast.success("Status removed");
+        toast.success("Удалено");
         const newStatus = statuses.filter((status) => {
           return status.id !== id;
         });
         setStatuses(newStatus);
       }
-      if (res.status === 401) toast.error("Unauthorised user access");
+      if (res.status === 401) toast.error("Несанкционированный доступ");
     });
   };
 
   const addStatusHandler = (status) =>
     setStatuses([...statuses, { ...status }]);
+
   //  Labels functions
 
-  const updateLabelsHandler = async (label) => {
-    const { id } = label;
-    fetch(`http://localhost:8080/labels/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(label),
-    })
-      .then((res) => {
-        if (res.status === 409) {
-          toast.error("Label already exists");
-          return;
-        }
-        if (res.status === 200) {
-          toast.success("Updated");
-          return res.json();
-        }
+  const updateLabelsHandler = async (data) => {
+    const { id } = data;
+    setLabels(
+      labels.map((label) => {
+        return label.id === id ? { ...data } : label;
       })
-      .then((data) => {
-        if (data)
-          setLabels(
-            labels.map((label) => {
-              return label.id === id ? { ...data } : label;
-            })
-          );
-      });
+    );
   };
 
   const removeLabelHandler = async (id) => {
@@ -250,13 +209,13 @@ function App() {
       headers: { Authorization: `Bearer ${userData.accessToken}` },
     }).then((res) => {
       if (res.status === 200) {
-        toast.success("Label removed");
+        toast.success("Удалено");
         const newLabels = labels.filter((label) => {
           return label.id !== id;
         });
         setLabels(newLabels);
       }
-      if (res.status === 401) toast.error("Unauthorised user access");
+      if (res.status === 401) toast.error("Несанкционированный доступ");
     });
   };
 
@@ -278,13 +237,13 @@ function App() {
       headers: { Authorization: `Bearer ${userData.accessToken}` },
     }).then((res) => {
       if (res.status === 200) {
-        toast.success("Task deleted");
+        toast.success("Удалено");
         const newTasks = tasks.filter((task) => {
           return task.id !== +id;
         });
         setTasks(newTasks);
       }
-      if (res.status === 401) toast.error("Несанкционированный доступ ");
+      if (res.status === 401) toast.error("Несанкционированный доступ");
     });
   };
 

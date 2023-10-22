@@ -19,11 +19,11 @@ const NewStatus = (props) => {
         })
           .then((res) => {
             if (res.status === 409) {
-              toast.error("Status already exists");
+              toast.error("Такой статус уже существует");
               return;
             }
             if (res.status === 201) {
-              toast.success("Status successfully added")
+              toast.success("Статус добавлен")
               return res.json();
             }
           })

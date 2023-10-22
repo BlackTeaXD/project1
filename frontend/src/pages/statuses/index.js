@@ -18,22 +18,26 @@ const Statuses = (props) => {
   return (
     <div className="container wrapper flex-grow-1">
       <h1 className="display-4 fw-bold mt-4">Статусы</h1>
-      <Link className="btn btn-primary" to="/statuses/new">
+      <Link className="btn btn-primary mb-5" to="/statuses/new">
         Создать статус
       </Link>
-      <div className="table-responsive">
-        <table className="table table-borderless table-striped mt-5 bg-white">
-          <thead>
-            <tr>
-              <th className="py-3">ID</th>
-              <th className="py-3">Наименование</th>
-              <th className="py-3">Дата создания</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>{renderStatusList}</tbody>
-        </table>
-      </div>
+      {props.statuses.length === 0 ? (
+        <p className="lead fw-bold">Здесь пока ничего нет</p>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-borderless table-striped mt-5 bg-white">
+            <thead>
+              <tr>
+                <th className="py-3">ID</th>
+                <th className="py-3">Наименование</th>
+                <th className="py-3">Дата создания</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>{renderStatusList}</tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

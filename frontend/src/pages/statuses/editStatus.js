@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router";
 const EditStatus = (props) => {
   const { id } = useParams();
   const { token } = props;
   const navigate = useNavigate();
   const [status, setStatus] = useState({
-    title: '',
-    id: '',
+    title: "",
   });
   useEffect(() => {
     const getStatus = async () => {
@@ -19,13 +19,34 @@ const EditStatus = (props) => {
         .then((res) => res.json())
         .then((data) => setStatus(data));
     };
-    if(token) getStatus();
-  },[id, token]);
+    if (token) getStatus();
+  }, [id, token]);
   const edit = (e) => {
     e.preventDefault();
-    props.clickHandler(status);
-    setStatus({});
-    navigate("/statuses");
+    fetch(`http://localhost:8080/statuses/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(status),
+    })
+      .then((res) => {
+        if (res.status === 409) {
+          toast.error("Такой статус уже существует");
+          return;
+        }
+        if (res.status === 200) {
+          toast.success("Обновлено");
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (data) {
+          props.clickHandler(status);
+          navigate("/statuses");
+        }
+      });
   };
   return (
     <div className="container wrapper flex-grow-1">
@@ -44,7 +65,7 @@ const EditStatus = (props) => {
                 ...prevState,
                 title: e.target.value,
               }))
-            } 
+            }
           />
           <label htmlFor="data_name">Наименование</label>
         </div>

@@ -19,11 +19,11 @@ const NewLabel = (props) => {
         })
           .then((res) => {
             if (res.status === 409) {
-              toast.error("Label already exists");
+              toast.error("Такая метка уже существует");
               return;
             }
             if (res.status === 201) {
-              toast.success("Lalel successfully added");
+              toast.success("Метка добавлена");
               return res.json();
             }
           })

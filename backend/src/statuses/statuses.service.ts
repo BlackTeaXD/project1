@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MONGO_DUPLICATION_KEY_ERROR_CODE } from '../constants';
 import { CountersService } from '../counters/counters.service';
 import { SequenceName } from '../counters/enums/sequence-name.enum';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
@@ -82,25 +83,32 @@ export class StatusesService {
   }
 
   async update(id: number, updateStatusRequestDto: UpdateStatusRequestDto) {
-    const status = await this.statusModel
-      .findOneAndUpdate(
-        { id },
-        {
-          ...updateStatusRequestDto,
-        },
-        { new: true },
-      )
-      .select({
-        _id: 0,
-        id: 1,
-        title: 1,
-        createdAt: 1,
-      })
-      .exec();
-    if (!status) {
-      throw new NotFoundException('Status not found');
+    try {
+      const status = await this.statusModel
+        .findOneAndUpdate(
+          { id },
+          {
+            ...updateStatusRequestDto,
+          },
+          { new: true },
+        )
+        .select({
+          _id: 0,
+          id: 1,
+          title: 1,
+          createdAt: 1,
+        })
+        .exec();
+      if (!status) {
+        throw new NotFoundException('Status not found');
+      }
+      return status;
+    } catch (error) {
+      if (error.code === MONGO_DUPLICATION_KEY_ERROR_CODE) {
+        throw new ConflictException('Status already exists');
+      }
+      throw error;
     }
-    return status;
   }
 
   remove(id: number) {

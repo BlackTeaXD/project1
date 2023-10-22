@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MONGO_DUPLICATION_KEY_ERROR_CODE } from '../constants';
 import { CountersService } from '../counters/counters.service';
 import { SequenceName } from '../counters/enums/sequence-name.enum';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
@@ -82,25 +83,32 @@ export class LabelsService {
   }
 
   async update(id: number, updateLabelRequestDto: UpdateLabelRequestDto) {
-    const label = await this.labelModel
-      .findOneAndUpdate(
-        { id },
-        {
-          ...updateLabelRequestDto,
-        },
-        { new: true },
-      )
-      .select({
-        _id: 0,
-        id: 1,
-        title: 1,
-        createdAt: 1,
-      })
-      .exec();
-    if (!label) {
-      throw new NotFoundException('Label not found');
+    try {
+      const label = await this.labelModel
+        .findOneAndUpdate(
+          { id },
+          {
+            ...updateLabelRequestDto,
+          },
+          { new: true },
+        )
+        .select({
+          _id: 0,
+          id: 1,
+          title: 1,
+          createdAt: 1,
+        })
+        .exec();
+      if (!label) {
+        throw new NotFoundException('Label not found');
+      }
+      return label;
+    } catch (error) {
+      if (error.code === MONGO_DUPLICATION_KEY_ERROR_CODE) {
+        throw new ConflictException('Label already exists');
+      }
+      throw error;
     }
-    return label;
   }
 
   remove(id: number) {

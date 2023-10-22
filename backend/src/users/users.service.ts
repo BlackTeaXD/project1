@@ -1,10 +1,13 @@
 import {
-  ConflictException, ForbiddenException,
+  ConflictException,
+  ForbiddenException,
   Injectable,
-  NotFoundException, UnauthorizedException,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MONGO_DUPLICATION_KEY_ERROR_CODE } from '../constants';
 import { HashingService } from '../iam/hashing/hashing.service';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
@@ -57,21 +60,28 @@ export class UsersService {
       password = await this.hashingService.hash(password);
     }
 
-    return this.userModel
-      .findOneAndUpdate(
-        { id },
-        { ...updateUserRequestDto, password },
-        { new: true },
-      )
-      .select({
-        _id: 0,
-        id: 1,
-        firstname: 1,
-        lastname: 1,
-        email: 1,
-        createdAt: 1,
-      })
-      .exec();
+    try {
+      return await this.userModel
+        .findOneAndUpdate(
+          { id },
+          { ...updateUserRequestDto, password },
+          { new: true },
+        )
+        .select({
+          _id: 0,
+          id: 1,
+          firstname: 1,
+          lastname: 1,
+          email: 1,
+          createdAt: 1,
+        })
+        .exec();
+    } catch (error) {
+      if (error.code === MONGO_DUPLICATION_KEY_ERROR_CODE) {
+        throw new ConflictException('User already exists');
+      }
+      throw error;
+    }
   }
 
   deleteUser(user: ActiveUserData, id: number) {

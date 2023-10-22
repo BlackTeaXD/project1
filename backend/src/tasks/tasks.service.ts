@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as _ from 'lodash';
+import { MONGO_DUPLICATION_KEY_ERROR_CODE } from '../constants';
 import { CountersService } from '../counters/counters.service';
 import { SequenceName } from '../counters/enums/sequence-name.enum';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
@@ -132,8 +133,7 @@ export class TasksService {
     try {
       await this.taskModel.updateOne({ id }, update);
     } catch (error) {
-      const MongoDuplicationKeyErrorCode = 11000;
-      if (error.code === MongoDuplicationKeyErrorCode) {
+      if (error.code === MONGO_DUPLICATION_KEY_ERROR_CODE) {
         throw new ConflictException('Task already exists');
       }
       throw error;
